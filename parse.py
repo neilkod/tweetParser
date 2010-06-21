@@ -1,7 +1,11 @@
 #!/usr/bin/python
+""" parses twitter JSON data as obtained from the twitter streaming API.  A huge to-do
+    is to accept input/output filenames.  right now, the filenames are hard-coded for testing
+    purposes """
 import re
 import simplejson as json
 import codecs
+
 
 def writeToLogUnicode(logFile,text):
   fileHandle = codecs.open(logFile,'a','utf-8')
