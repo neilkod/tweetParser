@@ -9,7 +9,7 @@ def writeToLogUnicode(logFile,text):
   fileHandle.close()
 
 def getClient(clientText):
-  urlRegexp = re.compile("\<.*[a|A].*\>(.*)\<.*/[a|A].*\>")
+  urlRegexp = re.compile("\<.*[a|A].*\>(.*)\<.*/[a|A].*\>")  #h/t @mattrepl for the regexp.
   client = urlRegexp.match(dict['source'])
   if client == None:
     client = dict['source']
