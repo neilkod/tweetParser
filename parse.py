@@ -1,6 +1,12 @@
 #!/usr/bin/python
 import re
 import simplejson as json
+import codecs
+
+def writeToLogUnicode(logFile,text):
+  fileHandle = codecs.open(logFile,'a','utf-8')
+  fileHandle.write(text + '\n')
+  fileHandle.close()
 
 def getClient(clientText):
   urlRegexp = re.compile("\<.*[a|A].*\>(.*)\<.*/[a|A].*\>")
@@ -10,11 +16,30 @@ def getClient(clientText):
   else:
     client = client.groups()[0]
   return client
+  
 for line in file('tweets.json'):
   dict=json.loads(line)
   # make sure the tweet hasn't been deleted
+  # if it has, skip it.  The streaming API sends deleted tweets,
+  # we'll filter them out here.
   if 'delete' not in dict.keys():
+  
     client = getClient(dict['source'])
-    print client
-#    print '%d\t%s\t%s\t%s\t%s' % (dict['id'],dict['created_at'],client,dict['user']['screen_name'],dict['text'])
+    
+    # remove linefeeds from the tweets.  I'm not sure if this is the best way to handle this.
+    tweetText = re.sub('\r\n','',dict['text'])
+    tweetText = re.sub('\n','',dict['text'])    
+    
+    """ build the string that gets written to the file.  its in the format
+        id
+        timestamp
+        client
+        username(screen_name)
+        tweet text
+    """
+    
+    text = '%d\t%s\t%s\t%s\t%s' % (dict['id'],dict['created_at'],client,dict['user']['screen_name'],tweetText)
+    
+    writeToLogUnicode('tweets.txt',text)
+  
 print dict.keys()
