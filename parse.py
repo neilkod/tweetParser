@@ -27,7 +27,6 @@ for line in file('tweets.json'):
     client = getClient(dict['source'])
     
     # remove linefeeds from the tweets.  I'm not sure if this is the best way to handle this.
-    tweetText = re.sub('\r\n','',dict['text'])
     tweetText = re.sub('\n','',dict['text'])    
     
     """ build the string that gets written to the file.  its in the format
