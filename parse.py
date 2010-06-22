@@ -8,10 +8,9 @@ import codecs
 import sys
 
 
-def writeToLogUnicode(logFile,text):
-  fileHandle = codecs.open(logFile,'a','utf-8')
+
+def writeToLog(logFile,text):
   fileHandle.write(text + '\n')
-  fileHandle.close()
 
 def getClient(clientText):
   urlRegexp = re.compile("\<.*[a|A].*\>(.*)\<.*/[a|A].*\>")  #h/t @mattrepl for the regexp.
@@ -21,6 +20,12 @@ def getClient(clientText):
   else:
     client = client.groups()[0]
   return client
+
+logFile='tweets.txt'
+badFile='bad.txt'
+
+logFileHandle = codecs.open(logFile,'a','utf-8')
+badFileHandle = codecs.open(badFile,'a','utf-8')
   
 for line in sys.stdin:
   try:
@@ -28,7 +33,7 @@ for line in sys.stdin:
     
   except:
     # if we can't convert the json to a dict, lets log it and skip the row.
-    writeToLogUnicode('badFile.txt',line)
+    writeToLog(badFileHandle,line)
     continue
     
   try:
@@ -55,7 +60,9 @@ for line in sys.stdin:
     """
     
     text = '%d\t%s\t%s\t%s\t%s' % (dict['id'],dict['created_at'],client,dict['user']['screen_name'],tweetText)
-    writeToLogUnicode('tweets.txt',text)
+    writeToLog(logFileHandle,text)
   except:
     #text = '%d\t%s' % (dict['id'],dict['user']['screen_name'])
-    writeToLogUnicode('badFile.txt',line + '\n')
+    writeToLog(badFileHandle,line + '\n')
+fileHandle.close()
+    
