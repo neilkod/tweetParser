@@ -17,13 +17,16 @@ def getClient(clientText):
   urlRegexp = re.compile("\<.*[a|A].*\>(.*)\<.*/[a|A].*\>")  #h/t @mattrepl for the regexp.
   client = urlRegexp.match(dict['source'])
   if client == None:
-    client = dict['source']
+    client = clientText
   else:
     client = client.groups()[0]
   return client
   
 for line in sys.stdin:
-  dict=json.loads(line)
+  try:
+    dict=json.loads(line)
+  except:
+    continue
   # make sure the tweet hasn't been deleted
   # if it has, skip it.  The streaming API sends deleted tweets,
   # we'll filter them out here.
@@ -46,4 +49,3 @@ for line in sys.stdin:
     
     writeToLogUnicode('tweets.txt',text)
   
-print dict.keys()
