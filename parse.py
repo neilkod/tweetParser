@@ -58,4 +58,4 @@ for line in sys.stdin:
     writeToLogUnicode('tweets.txt',text)
   except:
     #text = '%d\t%s' % (dict['id'],dict['user']['screen_name'])
-    writeToLogUnicode('badFile.txt',line)
+    writeToLogUnicode('badFile.txt',line + '\n')
