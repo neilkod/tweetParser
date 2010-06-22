@@ -64,5 +64,6 @@ for line in sys.stdin:
   except:
     #text = '%d\t%s' % (dict['id'],dict['user']['screen_name'])
     writeToLog(badFileHandle,line + '\n')
-fileHandle.close()
+logFileHandle.close()
+badFileHandle.close()
     
