@@ -5,6 +5,7 @@
 import re
 import simplejson as json
 import codecs
+import sys
 
 
 def writeToLogUnicode(logFile,text):
@@ -21,7 +22,7 @@ def getClient(clientText):
     client = client.groups()[0]
   return client
   
-for line in file('tweets.json'):
+for line in sys.stdin:
   dict=json.loads(line)
   # make sure the tweet hasn't been deleted
   # if it has, skip it.  The streaming API sends deleted tweets,
