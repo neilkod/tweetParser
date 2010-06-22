@@ -1,5 +1,5 @@
 #!/usr/bin/python
-""" parses twitter JSON data as obtained from the twitter streaming API.  A huge to-do
+""" parses twitter JSON data from stdin.  A huge to-do
     is to accept input/output filenames.  right now, the filenames are hard-coded for testing
     purposes """
 import re
