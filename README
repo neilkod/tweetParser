@@ -1,4 +1,7 @@
 twitter parser
 2010 18Data
 license license license....
-big to-do - take a filename as input and return $filename.twt
+accepts twitter JSON from stdin and extracts tweet id, username, timestamp, client used, and tweet text
+trying to keep the output lightweight for performance reasons and to quickly process in map/reduce environments
+such as apache pig.
+big to-do - override the default filenames for the output file and bad file.
