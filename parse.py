@@ -25,33 +25,37 @@ def getClient(clientText):
 for line in sys.stdin:
   try:
     dict=json.loads(line)
+    
   except:
-    # if we can't convert the json, lets skip the row.
+    # if we can't convert the json to a dict, lets log it and skip the row.
+    writeToLogUnicode('badFile.txt',line)
     continue
     
-  try:  
-    # make sure the tweet hasn't been deleted
-    # if it has, skip it.  The streaming API sends deleted tweets,
-    # we'll filter them out here.
-    if 'delete' not in dict.keys():
-      if 'source' in dict.keys():
-        client = getClient(dict['source'])
-      else:
-        client = 'Undefined'
-      
-      # remove linefeeds from the tweets.  I'm not sure if this is the best way to handle this.
-      tweetText = re.sub('\n','',dict['text'])    
-      
-      """ build the string that gets written to the file.  its in the format
-          id
-          timestamp
-          client
-          username(screen_name)
-          tweet text
-      """
+  try:
+    # look for a text element.  this helps avoid deleted and scrub_geo tweets.
+    if 'text' not in dict.keys():
+      continue
     
-      text = '%d\t%s\t%s\t%s\t%s' % (dict['id'],dict['created_at'],client,dict['user']['screen_name'],tweetText)
-      writeToLogUnicode('tweets.txt',text)
+    # check to see if the tweet has a source.  This might not be necessary
+    # i ran into tweets without a source but those might have been scrub_geo tweets
+    if 'source' in dict.keys():
+      client = getClient(dict['source'])
+    else:
+      client = 'Undefined'
+      
+    # remove linefeeds from the tweets.  I'm not sure if this is the best way to handle this.
+    tweetText = re.sub('\n','',dict['text'])    
+      
+    """ build the string that gets written to the file.  its in the format
+        id
+        timestamp
+        client
+        username(screen_name)
+        tweet text
+    """
+    
+    text = '%d\t%s\t%s\t%s\t%s' % (dict['id'],dict['created_at'],client,dict['user']['screen_name'],tweetText)
+    writeToLogUnicode('tweets.txt',text)
   except:
     #text = '%d\t%s' % (dict['id'],dict['user']['screen_name'])
     writeToLogUnicode('badFile.txt',line)
