@@ -26,26 +26,32 @@ for line in sys.stdin:
   try:
     dict=json.loads(line)
   except:
+    # if we can't convert the json, lets skip the row.
     continue
-  # make sure the tweet hasn't been deleted
-  # if it has, skip it.  The streaming API sends deleted tweets,
-  # we'll filter them out here.
-  if 'delete' not in dict.keys():
-  
-    client = getClient(dict['source'])
     
-    # remove linefeeds from the tweets.  I'm not sure if this is the best way to handle this.
-    tweetText = re.sub('\n','',dict['text'])    
+  try:  
+    # make sure the tweet hasn't been deleted
+    # if it has, skip it.  The streaming API sends deleted tweets,
+    # we'll filter them out here.
+    if 'delete' not in dict.keys():
+      if 'source' in dict.keys():
+        client = getClient(dict['source'])
+      else:
+        client = 'Undefined'
+      
+      # remove linefeeds from the tweets.  I'm not sure if this is the best way to handle this.
+      tweetText = re.sub('\n','',dict['text'])    
+      
+      """ build the string that gets written to the file.  its in the format
+          id
+          timestamp
+          client
+          username(screen_name)
+          tweet text
+      """
     
-    """ build the string that gets written to the file.  its in the format
-        id
-        timestamp
-        client
-        username(screen_name)
-        tweet text
-    """
-    
-    text = '%d\t%s\t%s\t%s\t%s' % (dict['id'],dict['created_at'],client,dict['user']['screen_name'],tweetText)
-    
-    writeToLogUnicode('tweets.txt',text)
-  
+      text = '%d\t%s\t%s\t%s\t%s' % (dict['id'],dict['created_at'],client,dict['user']['screen_name'],tweetText)
+      writeToLogUnicode('tweets.txt',text)
+  except:
+    #text = '%d\t%s' % (dict['id'],dict['user']['screen_name'])
+    writeToLogUnicode('badFile.txt',line)
