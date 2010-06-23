@@ -7,8 +7,7 @@ import simplejson as json
 import codecs
 import sys
 
-logFile='tweets.txt'
-badFile='bad.txt'
+
 
 def writeToLog(logFile,text):
   logFile.write(text + '\n')
@@ -22,7 +21,7 @@ def getClient(clientText):
     client = client.groups()[0]
   return client
   
-def parseTweet(jsondata):
+def parseTweet(jsondata,logFileHandle,badFileHandle):
   try:
     dict=json.loads(jsondata)
     # look for a text element.  this helps avoid deleted and scrub_geo tweets.
@@ -48,17 +47,28 @@ def parseTweet(jsondata):
       writeToLog(logFileHandle,text)    
 
   except:
+    None
     # if we can't convert the json to a dict, lets log it and skip the row.
-    writeToLog(badFileHandle,line+'\n')      
+    # ignore the bad for now
+    #writeToLog(badFileHandle,line+'\n')      
 
+def parseFile(inputFile,tweetFileName,badFileName):
+  logFileHandle = codecs.open(tweetFileName,'a','utf-8')
+  badFileHandle = codecs.open(badFileName,'a','utf-8')
+  
+  for line in file(inputFile):
+    parseTweet(line,logFileHandle,badFileHandle)
 
+    
+if __name__ == '__main__':
+  logFile='tweets.txt'
+  badFile='bad.txt'
+  logFileHandle = codecs.open(logFile,'a','utf-8')
+  badFileHandle = codecs.open(badFile,'a','utf-8')
 
-logFileHandle = codecs.open(logFile,'a','utf-8')
-badFileHandle = codecs.open(badFile,'a','utf-8')
+  for line in sys.stdin:
+    parseTweet(line,logFileHandle,badFileHandle)
 
-for line in sys.stdin:
-  parseTweet(line)
-
-logFileHandle.close()
-badFileHandle.close()
+  logFileHandle.close()
+  badFileHandle.close()
     
