@@ -7,6 +7,11 @@ import simplejson as json
 import codecs
 import sys
 
+archivedProcessedFile = True
+archiveDirectory = 'processed'
+compressProcessedFile=False
+
+
 
 
 def writeToLog(logFile,text):
@@ -21,7 +26,7 @@ def getClient(clientText):
     client = client.groups()[0]
   return client
   
-def parseTweet(jsondata,logFileHandle,badFileHandle):
+def parseTweet(jsondata,logFileHandle):
   try:
     dict=json.loads(jsondata)
     # look for a text element.  this helps avoid deleted and scrub_geo tweets.
@@ -49,36 +54,36 @@ def parseTweet(jsondata,logFileHandle,badFileHandle):
 
   except:
     None
-    # if we can't convert the json to a dict, lets log it and skip the row.
-    # ignore the bad for now
-    #writeToLog(badFileHandle,line+'\n')  
 
 
 def parseFile(inputFile):
 
   parsed = 0
   cnt = 0
+  
   # for the time being, we'll just assume the outputfile will be inputfile.out
-  # and the badfile will be outputfile.bad.  we'll make this more dynamic later.
-  logFileHandle = codecs.open(inputFile + '.out' ,'w','utf-8')
-  badFileHandle = codecs.open(inputFile + '.bad','w','utf-8')
+  # we'll make this more dynamic later.
+  # if 
+  logFileHandle = codecs.open('output/' + inputFile + '.out' ,'w','utf-8')
+#  badFileHandle = codecs.open('bad/' + inputFile + '.bad','w','utf-8')
   
   for line in file(inputFile):
-    parseTweet(line,logFileHandle,badFileHandle)
+    parseTweet(line,logFileHandle)
     cnt = cnt + 1
 
-  print "%s: parsed %d tweets" % (inputFile,cnt)    
+  print "%s: parsed %d tweets" % (inputFile,cnt)  
+  if archivedProcessedFile :
+    os.rename(inputFile,archiveDirectory + '/' + inputFile)
 
     
 if __name__ == '__main__':
-  #logFile='tweets.txt'
-  logFile='earthquake.txt'
-  badFile='bad.txt'
+  logFile='tweets.txt'
+
   logFileHandle = codecs.open(logFile,'a','utf-8')
-  badFileHandle = codecs.open(badFile,'a','utf-8')
+
 
   for line in sys.stdin:
-    parseTweet(line,logFileHandle,badFileHandle)
+    parseTweet(line,logFileHandle)
 
   logFileHandle.close()
   badFileHandle.close()
