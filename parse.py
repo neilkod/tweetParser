@@ -52,23 +52,28 @@ def parseTweet(jsondata,logFileHandle,badFileHandle):
     # ignore the bad for now
     #writeToLog(badFileHandle,line+'\n')      
 
-def parseFile(inputFile,tweetFileName,badFileName):
-  logFileHandle = codecs.open(tweetFileName,'a','utf-8')
-  badFileHandle = codecs.open(badFileName,'a','utf-8')
+def parseFile(inputFile):
+
+  cnt = 0
+  logFileHandle = codecs.open(inputFile + '.out' ,'a','utf-8')
+  badFileHandle = codecs.open(inputFile + '.bad','a','utf-8')
   
   for line in file(inputFile):
     parseTweet(line,logFileHandle,badFileHandle)
 
     
 if __name__ == '__main__':
-  logFile='tweets.txt'
+  #logFile='tweets.txt'
+  logFile='earthquake.txt'
   badFile='bad.txt'
   logFileHandle = codecs.open(logFile,'a','utf-8')
   badFileHandle = codecs.open(badFile,'a','utf-8')
 
   for line in sys.stdin:
     parseTweet(line,logFileHandle,badFileHandle)
+    cnt = cnt + 1
 
+  print "%s parsed %d tweets" % (logFileName,cnt)
   logFileHandle.close()
   badFileHandle.close()
     
